@@ -1500,13 +1500,21 @@ module.exports = (function() {
         pos++;
 
         while (pos < tokensLength && tokens[pos].type !== TokenType.RightParenthesis) {
-            if (checkDeclaration(pos)) x.push(getDeclaration());
-            else if (checkArgument(pos)) {
+            if (checkDeclaration(pos)) {
+              x.push(getDeclaration());
+            } else if (checkArgument(pos)) {
                 body = getArgument();
-                if (typeof body.content === 'string') x.push(body);
-                else x = x.concat(body);
-            } else if (checkClass(pos)) x.push(getClass());
-            else throwError(pos);
+                if (typeof body.content === 'string')
+                  x.push(body);
+                else
+                  x = x.concat(body);
+            } else if (checkClass(pos)) {
+              x.push(getClass());
+            } else if (checkParentheses(pos)) {
+              x.push(getParentheses());
+            } else {
+              throwError(pos);
+            }
         }
 
         var end = getLastPosition(x, line, column, 1);
